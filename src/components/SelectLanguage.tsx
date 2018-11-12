@@ -1,7 +1,20 @@
 import React from 'react';
-import i18nConfig from '../config/i18n';
 
-function renderOption({ value, label }: { value: string, label: string }) {
+interface I18nConfig {
+    supportedLocales: {
+        [key: string]: string;
+    };
+}
+
+const i18nConfig: I18nConfig = {
+    supportedLocales: {
+        en: 'English',
+        ar: 'عربي',
+        fr: 'Français',
+    },
+}
+
+function renderOption(value: string, label: string) {
     return (<option key={value} value={value}>{label}</option>);
 }
 
@@ -18,7 +31,7 @@ function SelectLanguage(props: SelectLanuageProps) {
         >
             {
                 Object.keys(i18nConfig.supportedLocales).map((key) => {
-                    return renderOption({ value: key, label: i18nConfig.supportedLocales[key] });
+                    return renderOption(key, i18nConfig.supportedLocales[key]);
                 })
             }
         </select>

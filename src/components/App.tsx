@@ -2,18 +2,48 @@ import React, { Component } from 'react';
 
 import './App.css';
 import Cart from './Cart';
+import gaia, { t } from '../gaia/gaia';
+import i18nConfig from '../config/i18n';
 import SelectLanguage from './SelectLanguage';
-import { runInThisContext } from 'vm';
 
 class App extends Component {
+    state = {
+        locale: 'en',
+        isLocaleDetermined: false,
+    }
+
+    componentDidMount() {
+        const { supportedLocales, fallbackLocale } = i18nConfig;
+
+        gaia
+            .init({
+                supportedLocales: Object.keys(supportedLocales),
+                locale: 'fr',
+                fallbackLocale
+            })
+            .then((locale) => {
+                this.setState({ locale, isLocaleDetermined: true });
+            });
+    }
+
+    onSelectLocale = (newLocale: string) => {
+        this.setState({ isLocaleDetermined: false }, () => {
+            gaia.setLocale(newLocale)
+                .then(() => this.setState({
+                    locale: newLocale,
+                    isLocaleDetermined: true
+                }));
+        });
+    }
+
     renderHeader() {
         return (
             <header className="App__Header">
-                <h1>Your Cart</h1>
+                <h1>{t('title')}</h1>
 
                 <SelectLanguage
-                    value="en"
-                    onChange={() => { }}
+                    value={this.state.locale}
+                    onChange={this.onSelectLocale}
                 />
             </header>
         );
@@ -22,27 +52,22 @@ class App extends Component {
     renderLead() {
         return (
             <div className="App__Header">
-                <p className="App__Lead__Start">
-                    Evening, Adam. Here's what's currently in your
-                    shopping cart.
-                </p>
+                <p className="App__Lead__Start">{t('lead')}</p>
 
-                <p className="App__Lead__End">Updated 21/10/2019</p>
-            </div>
+                <p className="App__Lead__End">{t('updated')}</p>
+            </div >
         );
     }
 
     renderFooter() {
         return (
-            <p className="App__Footer">
-                This is a demo to test the Gaia i18n library
-            </p>
+            <p className="App__Footer">{t('footer')}</p>
         );
     }
 
-    render() {
+    renderContent() {
         return (
-            <div className="App">
+            <>
                 {this.renderHeader()}
 
                 {this.renderLead()}
@@ -50,6 +75,21 @@ class App extends Component {
                 <Cart />
 
                 {this.renderFooter()}
+            </>
+        );
+    }
+
+    renderLoader() {
+        return <p>Loading...</p>;
+    }
+
+    render() {
+        return (
+            <div className="App">
+                {this.state.isLocaleDetermined ?
+                    this.renderContent() :
+                    this.renderLoader()
+                }
             </div>
         );
     }
