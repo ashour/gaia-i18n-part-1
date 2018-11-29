@@ -1,18 +1,6 @@
 import React from 'react';
 
-interface I18nConfig {
-    supportedLocales: {
-        [key: string]: string;
-    };
-}
-
-const i18nConfig: I18nConfig = {
-    supportedLocales: {
-        en: 'English',
-        ar: 'عربي',
-        fr: 'Français',
-    },
-}
+import i18nConfig from '../config/i18n';
 
 function renderOption(value: string, label: string) {
     return (<option key={value} value={value}>{label}</option>);

@@ -29,10 +29,18 @@ class App extends Component {
     onSelectLocale = (newLocale: string) => {
         this.setState({ isLocaleDetermined: false }, () => {
             gaia.setLocale(newLocale)
-                .then(() => this.setState({
-                    locale: newLocale,
-                    isLocaleDetermined: true
-                }));
+                .then(() => {
+                    if (newLocale.indexOf('ar') === 0) {
+                        window.document.dir = 'rtl';
+                    } else {
+                        window.document.dir = 'ltr';
+                    }
+
+                    return this.setState({
+                        locale: newLocale,
+                        isLocaleDetermined: true
+                    });
+                });
         });
     }
 
